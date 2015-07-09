@@ -84,18 +84,3 @@ two demo files that you find in the repository:
    series in Azure compute cluster. This reduces the latency (data is available in
    the same data center) and it also lets you scale your computations over large
    number of machines and CPUs.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-a
