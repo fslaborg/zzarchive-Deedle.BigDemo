@@ -165,7 +165,7 @@ type ITableValueSource<'T> =
 /// Represents a data source for an index or a vector of a time series stored in partitioned
 /// Azure table. This takes `ITableValueSource<'T>` for actually reading the values and 
 /// `Ranges<PartitionedAddress>` representing the range that we're providing access to.
-type PartitionedTableSource<'T>(source:ITableValueSource<'T>, ranges:Ranges<PartitionedAddress>) = 
+type PartitionedTableSource<'T>(id, source:ITableValueSource<'T>, ranges:Ranges<PartitionedAddress>) = 
   let kta, atk = Func<_, _>(PartAddr.keyToAddress), Func<_, _>(PartAddr.addressToKey)
   let addressing = RangesAddressOperations(ranges, kta, atk) :> IAddressOperations
 
@@ -175,6 +175,7 @@ type PartitionedTableSource<'T>(source:ITableValueSource<'T>, ranges:Ranges<Part
 
   // Implements non-generic source (boilerplate)
   interface IVirtualVectorSource with
+    member x.AddressingSchemeID = id
     member x.Length = ranges.Length
     member x.ElementType = typeof<'T>
     member x.AddressOperations = addressing
@@ -184,7 +185,7 @@ type PartitionedTableSource<'T>(source:ITableValueSource<'T>, ranges:Ranges<Part
   // to `Ranges`, except for LookupRange which is not supported here at all
   interface IVirtualVectorSource<'T> with
     member x.MergeWith(sources) = 
-      PartitionedTableSource(source, ranges.MergeWith(sources |> Seq.map (function
+      PartitionedTableSource(id, source, ranges.MergeWith(sources |> Seq.map (function
         | :? PartitionedTableSource<'T> as t -> t.Ranges
         | _ -> failwith "MergeWith: other is not partitioned table source!"))) :> _
 
@@ -202,7 +203,7 @@ type PartitionedTableSource<'T>(source:ITableValueSource<'T>, ranges:Ranges<Part
 
     member x.GetSubVector(restriction) = 
       let newRanges = ranges.Restrict(restriction |> RangeRestriction.map PartAddr.addressToKey)
-      PartitionedTableSource<'T>(source, newRanges) :> _
+      PartitionedTableSource<'T>(id, source, newRanges) :> _
 
 
 // ------------------------------------------------------------------------------------------------
@@ -290,7 +291,7 @@ let getIndexSource id ranges =
       member x.ValueAt(k) = 
         let part = PartitionCache.get id (PartAddr.format (PartAddr.partOfKey k))
         OptionalValue(part.[k.Offset].Date) }
-  PartitionedTableSource<DateTimeOffset>(source, ranges)
+  PartitionedTableSource<DateTimeOffset>(id, source, ranges)
 
 /// Creates `IVirtualVectorSource<float>` for accessing specified ID and column. 
 /// This takes initial range (which should cover the whole series)
@@ -302,7 +303,7 @@ let getValueSource id column ranges =
       member x.ValueAt(k) = 
         let part = PartitionCache.get id (PartAddr.format (PartAddr.partOfKey k))
         OptionalValue(Convert.ToDouble(part.[k.Offset].Values.[column])) }
-  PartitionedTableSource<float>(source, ranges)
+  PartitionedTableSource<float>(id, source, ranges)
 
 /// Get `Ranges<'K>` value representing the full range for a table with the specified ID
 /// (This also creates `PartitionedAddressOperations` associated with ranges)
