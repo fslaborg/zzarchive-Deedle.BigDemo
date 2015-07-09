@@ -7,6 +7,7 @@ open System
 open MBrace
 open MBrace.Core
 open MBrace.Azure
+open MBrace.Workflows
 open MBrace.Azure.Client
 open Deedle
 open Credentials
@@ -63,17 +64,15 @@ meanMinuteReturns "WDC" (2012, 6, 1)
 open MBrace.Flow
 
 /// Calculate returns for all days in a given year and month
-/// Here, we can nicely use MBrace's "flow" to scale the processing
-/// of individual days across multiple threads/machines
+/// Here, we can nicely use MBrace's "Cloud.Ballanced.map" to scale 
+/// the processing of individual days across multiple threads/machines
 let returnsForMonth y m = cloud {
   let lastDay = DateTime(y,m,1).AddMonths(1).AddDays(-1.0).Day
   let! returns = 
-    [| 1 .. lastDay |]
-    |> CloudFlow.OfArray 
-    |> CloudFlow.map (fun d ->
+    [ 1 .. lastDay ] 
+    |> Cloud.Balanced.map (fun d ->
         let res = meanMinuteReturns "WDC" (y, m, d)
         DateTime(y,m,d), res ) 
-    |> CloudFlow.toArray
   return series returns }
 
 // Get the returns for a single month
