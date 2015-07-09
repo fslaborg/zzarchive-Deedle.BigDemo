@@ -1,7 +1,9 @@
 BigDeedle: Large time series Azure demo
 =======================================
 
-![BlueMountain Capital](https://www.bluemountaincapital.com/media/logo.gif)
+<p align="right">
+  <img src="https://www.bluemountaincapital.com/media/logo.gif" alt="BlueMountain Capital logo" />
+</p>
 
 **BigDeedle** is an extension of the exploratory data frame and time-series
 manipulation library called [Deedle](http://bluemountaincapital.github.io/Deedle/)/.
