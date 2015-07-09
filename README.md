@@ -1,7 +1,7 @@
 BigDeedle: Large time series Azure demo
 =======================================
 
-<p style="float:right;margin:20px">
+<p align="right">
   <img src="https://www.bluemountaincapital.com/media/logo.gif" alt="BlueMountain Capital logo" />
 </p>
 
