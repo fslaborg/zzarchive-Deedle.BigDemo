@@ -1,0 +1,8 @@
+source https://www.nuget.org/api/v2
+
+nuget MBrace.Flow 0.9.11-alpha
+nuget MBrace.Azure 0.6.8-alpha
+nuget MBrace.Azure.Standalone 0.6.8-alpha
+nuget FsLab 0.3.2
+nuget WindowsAzure.Storage
+nuget FSharp.Azure.StorageTypeProvider
