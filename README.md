@@ -72,6 +72,18 @@ to go through the `setup.fsx` script, which does the following:
 Once the setup is done, build the solution. Now, you're ready to play with the
 two demo files that you find in the repository:
 
+ - **Local demos** (`demo-local.fsx`) requires only storage connection, but not
+   a running MBrace cluster. This shows how to use BigDeedle and demonstrates the
+   various functions and exploratory operations that you can perform on a series or
+   a frame without actually accessing all data. The demos load data on demand from the
+   Azure Table via the storage connection string specified in `credentaials.fsx`.
+
+ - **MBrace cluster demos** (`demo-cloud.fsx`) requires a running MBrace cluster
+   (use [www.briskengine.com](https://www.briskengine.com/) to get one running). This
+   demonstrates how to use MBrace to run the computation over BigDeedle frames and
+   series in Azure compute cluster. This reduces the latency (data is available in
+   the same data center) and it also lets you scale your computations over large
+   number of machines and CPUs.
 
 
 
