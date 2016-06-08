@@ -5,3 +5,4 @@ obj
 .paket/paket.exe
 *.suo
 *.publishsettings
+.fake

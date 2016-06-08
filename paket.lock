@@ -10,6 +10,7 @@ NUGET
       R.NET.Community.FSharp (>= 1.6.4)
       RProvider (>= 1.1.13)
     DynamicInterop (0.7.4)
+    FAKE (4.28)
     FSharp.Azure.StorageTypeProvider (1.2)
     FSharp.Charting (0.90.14)
     FSharp.Core (4.0.0.1)
