@@ -108,18 +108,11 @@ type PartitionedAddressOperations(minAddress, maxAddress, getPartitionSize) =
       (Array.sum partSizes) - 1L
 
     member x.Range(k1, k2) =
-      // Technically, this is possible, but it is alway a bad idea so we
-      // throw instead of getting into a practically infinite loop 
-      let delayedFullIterationCheck part = 
-        if (part > 1) && (k1 = minAddress) && (k2 = maxAddress) then 
-          raise (new InvalidOperationException("Iterating over full range is not supported."))
-
       // Here, we need to generate range in both directions (when
       // k1 is larger, we need to produce range in 'reversed' order)
       let step = if k2 > k1 then +1 else -1 
       let partitions = PartAddr.inRange k1 k2
       partitions |> Seq.mapi (fun i (y,m,d) ->
-        delayedFullIterationCheck i
         let partSize = getPartitionSize(PartAddr.format (y,m,d))
         let first, last = 
           // Find first & last element on the partition. This is 
@@ -193,11 +186,7 @@ type PartitionedTableSource<'T>(id, source:ITableValueSource<'T>, ranges:Ranges<
   // Implements non-generic source (boilerplate)
   interface IVirtualVectorSource with
     member x.AddressingSchemeID = id
-    member x.Length = 
-      // Technically, this is possible, but it is alway a bad idea so we
-      // throw instead of getting into a practically infinite loop 
-      raise (new InvalidOperationException("Iterating over full range is not supported."))
-      ranges.Length
+    member x.Length = ranges.Length
 
     member x.ElementType = typeof<'T>
     member x.AddressOperations = addressing

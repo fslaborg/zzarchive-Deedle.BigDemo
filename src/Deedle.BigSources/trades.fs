@@ -14,7 +14,9 @@ open Deedle.Vectors.Virtual
 /// Provides access to partitions in the Azure table storage and caches the specified
 /// number of partitions. The cache is indexed by `ID * Partition`. Partitions contain
 /// arrays of date and values.
-module PartitionCache =
+module private PartitionCache =
+  let mutable loggingEnabled = false
+
   type AzureStore = AzureTypeProvider<Credentials.storageConnection>
 
   let private cacheSize = 20 
@@ -37,7 +39,7 @@ module PartitionCache =
     | true, (_, res) -> res
     | false, _ -> 
         cleanupCache()
-        printfn "Downloading %s: %s" id part
+        if loggingEnabled then printfn "Downloading %s: %s" id part
         let inline asDate rk ro = DateTimeOffset(int64 rk, TimeSpan.FromMinutes(float ro))
         let res = 
           match id with
@@ -53,6 +55,11 @@ module PartitionCache =
         cache.[(id, part)] <- (DateTime.UtcNow.Ticks, res)
         res
 
+/// Enable logging of partition downloads
+let EnableLogging() = PartitionCache.loggingEnabled <- true
+
+/// Disable logging of partition downloads
+let DisableLogging() = PartitionCache.loggingEnabled <- false
 
 /// Create a time series for the specified ID and Column (Bid/Ask/Price)
 let GetSeries id column = 

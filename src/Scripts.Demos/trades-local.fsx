@@ -1,6 +1,7 @@
-#load "../../packages/FsLab/Themes/AtomChester.fsx"
-#load "../../packages/FsLab/FsLab.fsx"
-#r "../Deedle.BigSources/bin/Debug/Deedle.BigSources.dll"
+#I "../.."
+#load "packages/FsLab/Themes/AtomChester.fsx"
+#load "packages/FsLab/FsLab.fsx"
+#r "src/Deedle.BigSources/bin/Debug/Deedle.BigSources.dll"
 
 open System
 open Deedle

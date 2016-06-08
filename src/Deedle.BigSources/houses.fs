@@ -14,7 +14,9 @@ open FSharp.Data
 /// Provides access to partitions in the Azure table storage and caches the specified
 /// number of partitions. The cache is indexed by `ID * Partition`. Partitions contain
 /// arrays of date and values.
-module PartitionCache =
+module private PartitionCache =
+  let mutable loggingEnabled = false
+
   let inline private asDate rk ro = 
     DateTimeOffset(int64 rk, TimeSpan.FromMinutes(float ro))
 
@@ -31,7 +33,7 @@ module PartitionCache =
           let values = [ for i in 0 .. 14 -> readValue (csv.Headers.Value.[i]) (row.Item(i)) ]
           { RowKey = int64 (row.Item(15)); Date = date; Values = Map.ofSeq values } |]
 
-  let private cacheSize = 20 
+  let private cacheSize = 100
 
   let private cache = 
     System.Collections.Concurrent.ConcurrentDictionary<_, int64 * _>()
@@ -51,11 +53,16 @@ module PartitionCache =
     | true, (_, res) -> res
     | false, _ -> 
         cleanupCache()
-        printfn "Downloading %s: %s" id part
+        if loggingEnabled then printfn "Downloading %s: %s" id part
         let res = readData part
         cache.[(id, part)] <- (DateTime.UtcNow.Ticks, res)
         res
 
+/// Enable logging of partition downloads
+let EnableLogging() = PartitionCache.loggingEnabled <- true
+
+/// Disable logging of partition downloads
+let DisableLogging() = PartitionCache.loggingEnabled <- false
 
 /// Create frame for the specified ID with all three columns
 let GetFrame () = 
@@ -64,7 +71,7 @@ let GetFrame () =
     [ "ID"; "Postcode"; "Type"; "OldNew"; "Duration"; "PAON"; "SAON"; 
       "Street"; "Locality"; "Town"; "District"; "County"; "Category"; "Status"]
 
-  let ranges = getCompleteRanges (1995s, 01y, 01y) (2016s, 04y, 30y) PartitionCache.get id
+  let ranges = getCompleteRanges (1995s, 01y, 01y) (2016s, 04y, 29y) PartitionCache.get id
   let idxSrc = getIndexSource PartitionCache.get id ranges
   let valSrcs = 
     [ yield getValueSource PartitionCache.get Convert.ToDouble id "Price" ranges :> IVirtualVectorSource
