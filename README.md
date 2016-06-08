@@ -56,10 +56,25 @@ Before running the code, you need to download dependencies. Either run build in
 Visual Studio (which fails, but still triggers Paket) or just run the command
 `.paket/paket.bootstraper.exe` followed by `.paket/paket.exe restore`.
 
-To run the code, you'll need to start an MBrace cluster. Use [www.briskengine.com](https://www.briskengine.com/)
-to do this. Once you have a cluster running, copy the keys you get into `utils/credentials.fsx`
-(use `utils/credentials.template` as the template for the file). Then you need
-to go through the `setup.fsx` script, which does the following:
+### Running house prices demos
+
+The house price demo uses a simple Suave REST server as a data source. You can find the
+source code for it in `src/HousePrices.Server`. You do not need to run it on your own, there
+is a live version running at [https://houseprices-data.azurewebsites.net/](https://houseprices-data.azurewebsites.net/).
+
+ - **Local demos** (`houses-local.fsx`) does not require any additional setup. It shows
+   how to load data from the BigDeedle storage, explore the data using the FsLab formatters
+   in [Ionide](http://ionide.io) and how to get a subset of the data and do local processing.
+   As an example, the script draws a chart of most expensive towns in the UK in April 2010
+   shown above.
+
+### Running finance demos
+
+To run the code, you'll need to start an MBrace cluster. Follow instructions at
+[www.mbrace.io](http://mbrace.io) to do this. You'll need to save your `azure.publishsettings`
+file into the `utils` folder, create a storage account and copy the connection string to
+`utils/credentials.fsx` (use `utils/credentials.template` as the template for the file).
+Then you need to go through the `setup-trades.fsx` script, which does the following:
 
  * It first downloads the CSV file with the data and saves it in chunks into
    local files in Azure storage.
@@ -72,13 +87,13 @@ to go through the `setup.fsx` script, which does the following:
 Once the setup is done, build the solution. Now, you're ready to play with the
 two demo files that you find in the repository:
 
- - **Local demos** (`demo-local.fsx`) requires only storage connection, but not
+ - **Local demos** (`trades-local.fsx`) requires only storage connection, but not
    a running MBrace cluster. This shows how to use BigDeedle and demonstrates the
    various functions and exploratory operations that you can perform on a series or
    a frame without actually accessing all data. The demos load data on demand from the
    Azure Table via the storage connection string specified in `credentaials.fsx`.
 
- - **MBrace cluster demos** (`demo-cloud.fsx`) requires a running MBrace cluster
+ - **MBrace cluster demos** (`trades-cloud.fsx`) requires a running MBrace cluster
    (use [www.briskengine.com](https://www.briskengine.com/) to get one running). This
    demonstrates how to use MBrace to run the computation over BigDeedle frames and
    series in Azure compute cluster. This reduces the latency (data is available in

@@ -1,3 +1,6 @@
 Deedle
 FSharp.Azure.StorageTypeProvider
 MBrace.Azure
+MBrace.Azure.Management
+FSharp.Data
+Hyak.Common
