@@ -94,7 +94,7 @@ two demo files that you find in the repository:
    Azure Table via the storage connection string specified in `credentaials.fsx`.
 
  - **MBrace cluster demos** (`trades-cloud.fsx`) requires a running MBrace cluster
-   (use [www.briskengine.com](https://www.briskengine.com/) to get one running). This
+   (follow [an MBrace tutorial](http://mbrace.io/azure-tutorial.html) to get one running). This
    demonstrates how to use MBrace to run the computation over BigDeedle frames and
    series in Azure compute cluster. This reduces the latency (data is available in
    the same data center) and it also lets you scale your computations over large
